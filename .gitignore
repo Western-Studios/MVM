@@ -55,3 +55,6 @@ Thumbs.db
 
 # JetBrains
 .idea/
+
+# Visual Studio
+.vs/
