@@ -18,21 +18,27 @@ public class PlayerController : MonoBehaviour
 
     [Header("Teleport")]
     [SerializeField] private float teleportMaxRange = 6f;
+    [SerializeField] private float teleportCooldown = 1.5f;
     [SerializeField] private GameObject teleportReticlePrefab;
     [SerializeField] private LayerMask solidLayer;
     [SerializeField] private GameObject teleportGhostPrefab;
 
+    [Header("Teleport VFX")]
+    [Tooltip("Purple smoke puff — spawned at BOTH origin and destination when teleporting")]
+    [SerializeField] private GameObject teleportSmokePrefab;
+
     [Header("Combat")]
     [SerializeField] private Transform firePoint;
     [SerializeField] private GameObject arcaneBlastPrefab;
-    [SerializeField] private GameObject fireballPrefab;
     [SerializeField] private float attackCooldown = 0.4f;
 
-    [Header("Fireball Side Effect")]
-    [SerializeField] private float fireballRecoilForce = 10f;
-    [SerializeField] private float recoilLockDuration = 0.18f;
+    [Header("Fireball  (Q key)")]
+    [SerializeField] private GameObject fireballPrefab;
+    [SerializeField] private float fireballCooldown = 0.5f;
+    [SerializeField] private float fireballRecoilForce = 16f;
+    [SerializeField] private float recoilLockDuration = 0.45f;
 
-    [Header("Ice Bolt")]
+    [Header("Ice Bolt  (E key)")]
     [SerializeField] private GameObject iceBoltPrefab;
     [SerializeField] private float iceBoltCooldown = 1f;
     [SerializeField] private float iceFreezeMaxTime = 0.65f;
@@ -40,6 +46,7 @@ public class PlayerController : MonoBehaviour
     [Header("Abilities")]
     [SerializeField] private AbilityData abilities;
 
+    // ── Private state ──────────────────────────────────────────────────
     private Rigidbody2D rb;
     private Animator animator;
 
@@ -47,11 +54,14 @@ public class PlayerController : MonoBehaviour
     private float jumpBufferCounter;
     private float jumpCooldown;
     private float attackCooldownCounter;
+    private float fireballCooldownCounter;
     private float iceBoltCooldownCounter;
     private bool isGrounded;
     private bool facingRight = false;
 
+    private float teleportCooldownCounter;
     private float recoilTimer;
+    private float recoilVelocityX;   // stored so we can hold it during the lock window
     private float iceFreezeTimer;
     private bool isFrozen;
     [SerializeField] private bool isJumping;
@@ -61,6 +71,7 @@ public class PlayerController : MonoBehaviour
     private GameObject reticleInstance;
     private GameObject activeGhost;
 
+    // ── Lifecycle ──────────────────────────────────────────────────────
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -72,6 +83,30 @@ public class PlayerController : MonoBehaviour
     {
         if (teleportReticlePrefab != null)
             reticleInstance = Instantiate(teleportReticlePrefab);
+
+        ValidateReferences();
+    }
+
+    /// <summary>
+    /// Runs once at startup and logs a warning for every unassigned
+    /// Inspector field that will cause a silent failure at runtime.
+    /// </summary>
+    private void ValidateReferences()
+    {
+        if (firePoint == null)
+            Debug.LogWarning("[PlayerController] 'Fire Point' is not assigned — projectiles will not spawn!", this);
+
+        if (arcaneBlastPrefab == null)
+            Debug.LogWarning("[PlayerController] 'Arcane Blast Prefab' is not assigned.", this);
+
+        if (groundCheck == null)
+            Debug.LogWarning("[PlayerController] 'Ground Check' transform is not assigned — grounding will not work.", this);
+
+        if (abilities == null)
+            Debug.LogWarning("[PlayerController] 'Abilities' ScriptableObject is not assigned — all ability checks will throw.", this);
+
+        if (solidLayer == 0)
+            Debug.LogWarning("[PlayerController] 'Solid Layer' mask is not set — teleport will never be blocked by walls or ground!", this);
     }
 
     private void Update()
@@ -79,13 +114,15 @@ public class PlayerController : MonoBehaviour
         CheckGround();
         HandleMovement();
         HandleJump();
-        HandleIceBolt();
-        HandleTeleport();
-        HandleAttack();
+        HandleIceBolt();       // E key
+        HandleFireball();      // Q key
+        HandleTeleport();      // Right Click
+        HandleAttack();        // Left Click — arcane blast (always)
         FaceMouse();
         UpdateAnimator();
     }
 
+    // ── Ground & Jump ──────────────────────────────────────────────────
     private void CheckGround()
     {
         jumpCooldown -= Time.deltaTime;
@@ -114,7 +151,13 @@ public class PlayerController : MonoBehaviour
     private void HandleMovement()
     {
         recoilTimer -= Time.deltaTime;
-        if (recoilTimer > 0f) return;
+
+        if (recoilTimer > 0f)
+        {
+            // Actively hold the recoil X velocity so player input can't fight it mid-launch
+            rb.linearVelocity = new Vector2(recoilVelocityX, rb.linearVelocity.y);
+            return;
+        }
 
         float horizontal = Input.GetAxisRaw("Horizontal");
         rb.linearVelocity = new Vector2(horizontal * moveSpeed, rb.linearVelocity.y);
@@ -136,80 +179,49 @@ public class PlayerController : MonoBehaviour
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y * 0.5f);
     }
 
-    private void HandleTeleport()
-    {
-        if (!abilities.hasTeleport)
-        {
-            if (reticleInstance != null)
-                reticleInstance.SetActive(false);
-            return;
-        }
-
-        Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        mouseWorld.z = 0f;
-
-        Vector2 toMouse = mouseWorld - transform.position;
-        float distance = toMouse.magnitude;
-        Vector3 targetPosition = distance <= teleportMaxRange
-            ? mouseWorld
-            : transform.position + (Vector3)(toMouse.normalized * teleportMaxRange);
-
-        bool valid = !Physics2D.OverlapCircle(targetPosition, 0.3f, solidLayer);
-
-        if (reticleInstance != null)
-        {
-            reticleInstance.SetActive(true);
-            reticleInstance.transform.position = targetPosition;
-
-            var sr = reticleInstance.GetComponent<SpriteRenderer>();
-            if (sr != null)
-                sr.color = valid ? Color.green : Color.red;
-        }
-
-        if (Input.GetMouseButtonDown(1) && valid)
-        {
-            if (teleportGhostPrefab != null)
-            {
-                if (activeGhost != null) Destroy(activeGhost);
-                activeGhost = Instantiate(teleportGhostPrefab, transform.position, Quaternion.identity);
-            }
-            transform.position = targetPosition;
-        }
-    }
-
+    // ── Arcane Blast — Left Click (always available) ───────────────────
     private void HandleAttack()
     {
         attackCooldownCounter -= Time.deltaTime;
 
-        if (!Input.GetMouseButtonDown(0) || attackCooldownCounter > 0f)
-            return;
+        if (!Input.GetMouseButtonDown(0) || attackCooldownCounter > 0f) return;
+        if (arcaneBlastPrefab == null) return;
 
-        Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        mouseWorld.z = 0f;
-        Vector2 direction = ((Vector2)mouseWorld - (Vector2)firePoint.position).normalized;
-
-        if (abilities.hasFireball)
-        {
-            Instantiate(fireballPrefab, firePoint.position, Quaternion.identity)
-                .GetComponent<Projectile>()?.Initialize(direction);
-
-            rb.linearVelocity = new Vector2(-direction.x * fireballRecoilForce, rb.linearVelocity.y);
-            recoilTimer = recoilLockDuration;
-        }
-        else
-        {
-            Instantiate(arcaneBlastPrefab, firePoint.position, Quaternion.identity)
-                .GetComponent<Projectile>()?.Initialize(direction);
-        }
+        FireProjectile(arcaneBlastPrefab, AimDirection());
 
         attackCooldownCounter = attackCooldown;
         animator?.SetTrigger("2_Attack");
     }
 
+    // ── Fireball — Q key (requires hasFireball) ────────────────────────
+    private void HandleFireball()
+    {
+        fireballCooldownCounter -= Time.deltaTime;
+
+        if (!abilities.hasFireball) return;
+        if (!Input.GetKeyDown(KeyCode.Q) || fireballCooldownCounter > 0f) return;
+        if (fireballPrefab == null) return;
+
+        Vector2 direction = AimDirection();
+        FireProjectile(fireballPrefab, direction);
+
+        // Recoil side effect — launches wizard opposite to firing direction.
+        // X is stored and held during the lock so the player reliably crosses gaps.
+        // Y is a one-time impulse; gravity takes over immediately after.
+        recoilVelocityX = -direction.x * fireballRecoilForce;
+        rb.linearVelocity = new Vector2(recoilVelocityX, -direction.y * fireballRecoilForce);
+        recoilTimer = recoilLockDuration;
+
+        fireballCooldownCounter = fireballCooldown;
+        animator?.SetTrigger("2_Attack");
+    }
+
+    // ── Ice Bolt — E key (requires hasIceBolt) ─────────────────────────
     private void HandleIceBolt()
     {
         iceBoltCooldownCounter -= Time.deltaTime;
 
+        // Keep processing the freeze even if the cooldown lock isn't set
         if (isFrozen)
         {
             iceFreezeTimer -= Time.deltaTime;
@@ -225,20 +237,138 @@ public class PlayerController : MonoBehaviour
 
         if (!abilities.hasIceBolt) return;
         if (!Input.GetKeyDown(KeyCode.E) || iceBoltCooldownCounter > 0f) return;
+        if (iceBoltPrefab == null) return;
 
-        Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        mouseWorld.z = 0f;
-        Vector2 direction = ((Vector2)mouseWorld - (Vector2)firePoint.position).normalized;
+        FireProjectile(iceBoltPrefab, AimDirection());
 
-        if (iceBoltPrefab != null)
-            Instantiate(iceBoltPrefab, firePoint.position, Quaternion.identity)
-                .GetComponent<Projectile>()?.Initialize(direction);
-
+        // Freeze side effect — halts wizard mid-air
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f);
         rb.gravityScale = 0f;
         iceFreezeTimer = iceFreezeMaxTime;
         isFrozen = true;
         iceBoltCooldownCounter = iceBoltCooldown;
+
+        animator?.SetTrigger("2_Attack");
+    }
+
+    // ── Teleport — Right Click (requires hasTeleport) ──────────────────
+    private void HandleTeleport()
+    {
+        teleportCooldownCounter -= Time.deltaTime;
+
+        if (!abilities.hasTeleport)
+        {
+            if (reticleInstance != null) reticleInstance.SetActive(false);
+            return;
+        }
+
+        Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        mouseWorld.z = 0f;
+
+        Vector2 toMouse = mouseWorld - transform.position;
+        float distance = toMouse.magnitude;
+        Vector3 targetPosition = distance <= teleportMaxRange
+            ? mouseWorld
+            : transform.position + (Vector3)(toMouse.normalized * teleportMaxRange);
+
+        // useTriggers = false so Room bounds (trigger) don't block every position in the room
+        var filter = new ContactFilter2D();
+        filter.useLayerMask = true;
+        filter.SetLayerMask(solidLayer);
+        filter.useTriggers = false;
+
+        // 1. Destination must not be inside a wall
+        var overlapResults = new Collider2D[1];
+        bool destinationClear = Physics2D.OverlapCircle(targetPosition, 0.25f, filter, overlapResults) == 0;
+
+        // 2. Path from player to destination must not pass through a wall.
+        var lineResults = new RaycastHit2D[1];
+        Vector2 lineStart = (Vector2)transform.position + Vector2.up * 0.4f;
+        bool pathClear = Physics2D.Linecast(lineStart, targetPosition, filter, lineResults) == 0;
+
+        bool onCooldown = teleportCooldownCounter > 0f;
+        bool valid = destinationClear && pathClear && !onCooldown;
+
+        if (reticleInstance != null)
+        {
+            reticleInstance.SetActive(true);
+            reticleInstance.transform.position = targetPosition;
+            var sr = reticleInstance.GetComponent<SpriteRenderer>();
+            if (sr != null)
+            {
+                if (onCooldown)
+                    sr.color = new Color(0.5f, 0.5f, 0.5f, 0.5f);  // dimmed grey while recharging
+                else
+                    sr.color = valid ? Color.green : Color.red;
+            }
+        }
+
+        if (Input.GetMouseButtonDown(1) && valid)
+        {
+            teleportCooldownCounter = teleportCooldown;
+            Vector3 originPosition = transform.position;
+
+            // Spawn ghost copy at origin (triggers remote switches)
+            if (teleportGhostPrefab != null)
+            {
+                if (activeGhost != null) Destroy(activeGhost);
+                activeGhost = Instantiate(teleportGhostPrefab, originPosition, Quaternion.identity);
+            }
+
+            // Departure smoke at origin
+            if (teleportSmokePrefab != null)
+                Instantiate(teleportSmokePrefab, originPosition, Quaternion.identity);
+
+            // Move the wizard
+            transform.position = targetPosition;
+
+            // Arrival smoke at destination
+            if (teleportSmokePrefab != null)
+                Instantiate(teleportSmokePrefab, targetPosition, Quaternion.identity);
+        }
+    }
+
+    // ── Utilities ──────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Instantiates a projectile prefab and calls Initialize on it.
+    /// Searches root first, then children — handles any prefab hierarchy.
+    /// Logs a warning if the Projectile component can't be found.
+    /// </summary>
+    private Projectile FireProjectile(GameObject prefab, Vector2 direction)
+    {
+        var go = Instantiate(prefab, firePoint.position, Quaternion.identity);
+        var proj = go.GetComponent<Projectile>()
+                ?? go.GetComponentInChildren<Projectile>();
+
+        if (proj == null)
+        {
+            Debug.LogWarning($"[PlayerController] '{prefab.name}' has no Projectile component on root or any child. Did you forget to add it?", go);
+            return null;
+        }
+
+        // Prevent the projectile from triggering against the player who fired it.
+        // We do this at the physics level so the collision event never fires at all,
+        // rather than filtering it out after the fact in OnTriggerEnter2D.
+        var projCollider = go.GetComponent<Collider2D>()
+                        ?? go.GetComponentInChildren<Collider2D>();
+        if (projCollider != null)
+        {
+            foreach (var col in GetComponentsInChildren<Collider2D>())
+                Physics2D.IgnoreCollision(projCollider, col);
+        }
+
+        proj.Initialize(direction);
+        return proj;
+    }
+
+    /// <summary>Returns a normalised direction from the fire point toward the mouse cursor.</summary>
+    private Vector2 AimDirection()
+    {
+        Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        mouseWorld.z = 0f;
+        Vector2 origin = firePoint != null ? (Vector2)firePoint.position : (Vector2)transform.position;
+        return ((Vector2)mouseWorld - origin).normalized;
     }
 
     private void FaceMouse()
@@ -255,7 +385,7 @@ public class PlayerController : MonoBehaviour
         if (animator == null) return;
         animator.SetBool("1_Move", Mathf.Abs(rb.linearVelocity.x) > 0.1f);
     }
-       
+
     private void Flip()
     {
         facingRight = !facingRight;

@@ -40,4 +40,13 @@ public class PlayerHealth : MonoBehaviour
         currentHealth = Mathf.Min(maxHealth, currentHealth + amount);
         onHealthChanged?.Invoke(currentHealth, maxHealth);
     }
+
+    /// <summary>Instantly kills the player, bypassing invincibility frames.</summary>
+    public void Kill()
+    {
+        currentHealth = 0;
+        invincibilityTimer = 0f;
+        onHealthChanged?.Invoke(currentHealth, maxHealth);
+        onDeath?.Invoke();
+    }
 }

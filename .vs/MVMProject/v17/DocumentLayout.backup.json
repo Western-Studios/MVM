@@ -1,0 +1,213 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\kpbon\\WesternStudios\\GameJam\\MVM\\MVMProject\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{26D03B66-AD94-A15F-9B17-0A45AB5B0D1F}|Assembly-CSharp.csproj|c:\\users\\kpbon\\westernstudios\\gamejam\\mvm\\mvmproject\\assets\\spum\\readme - 3.1.1.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{26D03B66-AD94-A15F-9B17-0A45AB5B0D1F}|Assembly-CSharp.csproj|solutionrelative:assets\\spum\\readme - 3.1.1.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{26D03B66-AD94-A15F-9B17-0A45AB5B0D1F}|Assembly-CSharp.csproj|C:\\Users\\kpbon\\WesternStudios\\GameJam\\MVM\\MVMProject\\assets\\pixel2dcastletileset\\about.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{26D03B66-AD94-A15F-9B17-0A45AB5B0D1F}|Assembly-CSharp.csproj|solutionrelative:assets\\pixel2dcastletileset\\about.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{26D03B66-AD94-A15F-9B17-0A45AB5B0D1F}|Assembly-CSharp.csproj|C:\\Users\\kpbon\\WesternStudios\\GameJam\\MVM\\MVMProject\\assets\\scripts\\destructibledoor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{26D03B66-AD94-A15F-9B17-0A45AB5B0D1F}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\destructibledoor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{26D03B66-AD94-A15F-9B17-0A45AB5B0D1F}|Assembly-CSharp.csproj|C:\\Users\\kpbon\\WesternStudios\\GameJam\\MVM\\MVMProject\\assets\\scripts\\projectile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{26D03B66-AD94-A15F-9B17-0A45AB5B0D1F}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\projectile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{26D03B66-AD94-A15F-9B17-0A45AB5B0D1F}|Assembly-CSharp.csproj|C:\\Users\\kpbon\\WesternStudios\\GameJam\\MVM\\MVMProject\\assets\\scripts\\abilitypickup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{26D03B66-AD94-A15F-9B17-0A45AB5B0D1F}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\abilitypickup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{26D03B66-AD94-A15F-9B17-0A45AB5B0D1F}|Assembly-CSharp.csproj|C:\\Users\\kpbon\\WesternStudios\\GameJam\\MVM\\MVMProject\\assets\\scripts\\persistencemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{26D03B66-AD94-A15F-9B17-0A45AB5B0D1F}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\persistencemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{26D03B66-AD94-A15F-9B17-0A45AB5B0D1F}|Assembly-CSharp.csproj|C:\\Users\\kpbon\\WesternStudios\\GameJam\\MVM\\MVMProject\\assets\\scripts\\abilitydata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{26D03B66-AD94-A15F-9B17-0A45AB5B0D1F}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\abilitydata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{26D03B66-AD94-A15F-9B17-0A45AB5B0D1F}|Assembly-CSharp.csproj|C:\\Users\\kpbon\\WesternStudios\\GameJam\\MVM\\MVMProject\\assets\\scripts\\playercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{26D03B66-AD94-A15F-9B17-0A45AB5B0D1F}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\playercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{26D03B66-AD94-A15F-9B17-0A45AB5B0D1F}|Assembly-CSharp.csproj|C:\\Users\\kpbon\\WesternStudios\\GameJam\\MVM\\MVMProject\\assets\\scripts\\enemybase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{26D03B66-AD94-A15F-9B17-0A45AB5B0D1F}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\enemybase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{26D03B66-AD94-A15F-9B17-0A45AB5B0D1F}|Assembly-CSharp.csproj|C:\\Users\\kpbon\\WesternStudios\\GameJam\\MVM\\MVMProject\\assets\\scripts\\playerhealth.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{26D03B66-AD94-A15F-9B17-0A45AB5B0D1F}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\playerhealth.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{26D03B66-AD94-A15F-9B17-0A45AB5B0D1F}|Assembly-CSharp.csproj|C:\\Users\\kpbon\\WesternStudios\\GameJam\\MVM\\MVMProject\\assets\\scripts\\slimeenemy.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{26D03B66-AD94-A15F-9B17-0A45AB5B0D1F}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\slimeenemy.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{26D03B66-AD94-A15F-9B17-0A45AB5B0D1F}|Assembly-CSharp.csproj|C:\\Users\\kpbon\\WesternStudios\\GameJam\\MVM\\MVMProject\\assets\\scripts\\turretenemy.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{26D03B66-AD94-A15F-9B17-0A45AB5B0D1F}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\turretenemy.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ReadMe - 3.1.1.txt",
+              "DocumentMoniker": "C:\\Users\\kpbon\\WesternStudios\\GameJam\\MVM\\MVMProject\\Assets\\SPUM\\ReadMe - 3.1.1.txt",
+              "RelativeDocumentMoniker": "Assets\\SPUM\\ReadMe - 3.1.1.txt",
+              "ToolTip": "C:\\Users\\kpbon\\WesternStudios\\GameJam\\MVM\\MVMProject\\Assets\\SPUM\\ReadMe - 3.1.1.txt",
+              "RelativeToolTip": "Assets\\SPUM\\ReadMe - 3.1.1.txt",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
+              "WhenOpened": "2026-05-18T02:55:21.41Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "about.txt",
+              "DocumentMoniker": "C:\\Users\\kpbon\\WesternStudios\\GameJam\\MVM\\MVMProject\\Assets\\Pixel2DCastleTileset\\about.txt",
+              "RelativeDocumentMoniker": "Assets\\Pixel2DCastleTileset\\about.txt",
+              "ToolTip": "C:\\Users\\kpbon\\WesternStudios\\GameJam\\MVM\\MVMProject\\Assets\\Pixel2DCastleTileset\\about.txt",
+              "RelativeToolTip": "Assets\\Pixel2DCastleTileset\\about.txt",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
+              "WhenOpened": "2026-05-16T19:35:29.456Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "PersistenceManager.cs",
+              "DocumentMoniker": "C:\\Users\\kpbon\\WesternStudios\\GameJam\\MVM\\MVMProject\\Assets\\Scripts\\PersistenceManager.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\PersistenceManager.cs",
+              "ToolTip": "C:\\Users\\kpbon\\WesternStudios\\GameJam\\MVM\\MVMProject\\Assets\\Scripts\\PersistenceManager.cs",
+              "RelativeToolTip": "Assets\\Scripts\\PersistenceManager.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAA2AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-12T21:34:00.229Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "DestructibleDoor.cs",
+              "DocumentMoniker": "C:\\Users\\kpbon\\WesternStudios\\GameJam\\MVM\\MVMProject\\Assets\\Scripts\\DestructibleDoor.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\DestructibleDoor.cs",
+              "ToolTip": "C:\\Users\\kpbon\\WesternStudios\\GameJam\\MVM\\MVMProject\\Assets\\Scripts\\DestructibleDoor.cs",
+              "RelativeToolTip": "Assets\\Scripts\\DestructibleDoor.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-12T21:33:55.946Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "AbilityPickup.cs",
+              "DocumentMoniker": "C:\\Users\\kpbon\\WesternStudios\\GameJam\\MVM\\MVMProject\\Assets\\Scripts\\AbilityPickup.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\AbilityPickup.cs",
+              "ToolTip": "C:\\Users\\kpbon\\WesternStudios\\GameJam\\MVM\\MVMProject\\Assets\\Scripts\\AbilityPickup.cs",
+              "RelativeToolTip": "Assets\\Scripts\\AbilityPickup.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB8AAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-12T21:33:50.408Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "TurretEnemy.cs",
+              "DocumentMoniker": "C:\\Users\\kpbon\\WesternStudios\\GameJam\\MVM\\MVMProject\\Assets\\Scripts\\TurretEnemy.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\TurretEnemy.cs",
+              "ToolTip": "C:\\Users\\kpbon\\WesternStudios\\GameJam\\MVM\\MVMProject\\Assets\\Scripts\\TurretEnemy.cs",
+              "RelativeToolTip": "Assets\\Scripts\\TurretEnemy.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAiwC0AAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-12T02:49:32.282Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "SlimeEnemy.cs",
+              "DocumentMoniker": "C:\\Users\\kpbon\\WesternStudios\\GameJam\\MVM\\MVMProject\\Assets\\Scripts\\SlimeEnemy.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\SlimeEnemy.cs",
+              "ToolTip": "C:\\Users\\kpbon\\WesternStudios\\GameJam\\MVM\\MVMProject\\Assets\\Scripts\\SlimeEnemy.cs",
+              "RelativeToolTip": "Assets\\Scripts\\SlimeEnemy.cs",
+              "ViewState": "AgIAAAoAAAAAAAAAAAAiwDEAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-12T02:49:30.405Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "PlayerHealth.cs",
+              "DocumentMoniker": "C:\\Users\\kpbon\\WesternStudios\\GameJam\\MVM\\MVMProject\\Assets\\Scripts\\PlayerHealth.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\PlayerHealth.cs",
+              "ToolTip": "C:\\Users\\kpbon\\WesternStudios\\GameJam\\MVM\\MVMProject\\Assets\\Scripts\\PlayerHealth.cs",
+              "RelativeToolTip": "Assets\\Scripts\\PlayerHealth.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACoAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-12T02:49:26.642Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "EnemyBase.cs",
+              "DocumentMoniker": "C:\\Users\\kpbon\\WesternStudios\\GameJam\\MVM\\MVMProject\\Assets\\Scripts\\EnemyBase.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\EnemyBase.cs",
+              "ToolTip": "C:\\Users\\kpbon\\WesternStudios\\GameJam\\MVM\\MVMProject\\Assets\\Scripts\\EnemyBase.cs",
+              "RelativeToolTip": "Assets\\Scripts\\EnemyBase.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB4AAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-12T02:49:23.446Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Projectile.cs",
+              "DocumentMoniker": "C:\\Users\\kpbon\\WesternStudios\\GameJam\\MVM\\MVMProject\\Assets\\Scripts\\Projectile.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Projectile.cs",
+              "ToolTip": "C:\\Users\\kpbon\\WesternStudios\\GameJam\\MVM\\MVMProject\\Assets\\Scripts\\Projectile.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Projectile.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAADAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-12T02:34:36.977Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "PlayerController.cs",
+              "DocumentMoniker": "C:\\Users\\kpbon\\WesternStudios\\GameJam\\MVM\\MVMProject\\Assets\\Scripts\\PlayerController.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\PlayerController.cs",
+              "ToolTip": "C:\\Users\\kpbon\\WesternStudios\\GameJam\\MVM\\MVMProject\\Assets\\Scripts\\PlayerController.cs",
+              "RelativeToolTip": "Assets\\Scripts\\PlayerController.cs",
+              "ViewState": "AgIAAIQAAAAAAAAAAAAswKEAAAAlAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-12T01:20:26.604Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "AbilityData.cs",
+              "DocumentMoniker": "C:\\Users\\kpbon\\WesternStudios\\GameJam\\MVM\\MVMProject\\Assets\\Scripts\\AbilityData.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\AbilityData.cs",
+              "ToolTip": "C:\\Users\\kpbon\\WesternStudios\\GameJam\\MVM\\MVMProject\\Assets\\Scripts\\AbilityData.cs",
+              "RelativeToolTip": "Assets\\Scripts\\AbilityData.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-12T01:18:06.813Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
