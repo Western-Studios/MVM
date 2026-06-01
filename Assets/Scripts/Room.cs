@@ -22,7 +22,13 @@ public class Room : MonoBehaviour
     {
         col = GetComponent<Collider2D>();
         col.isTrigger = true;
-        GetComponentsInChildren(enemies);
+    }
+
+    // Called by EnemyBase.Start() so enemies register regardless of scene hierarchy.
+    public void RegisterEnemy(EnemyBase enemy)
+    {
+        if (!enemies.Contains(enemy))
+            enemies.Add(enemy);
     }
 
     private void Start()

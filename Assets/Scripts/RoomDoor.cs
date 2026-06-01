@@ -11,9 +11,12 @@ public class RoomDoor : MonoBehaviour
     private static float lastTransitionTime = -1f;
     private const float TransitionCooldown = 0.75f;
 
+    private Collider2D col;
+
     private void Awake()
     {
-        GetComponent<Collider2D>().isTrigger = true;
+        col = GetComponent<Collider2D>();
+        col.isTrigger = true;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -24,7 +27,7 @@ public class RoomDoor : MonoBehaviour
         Rigidbody2D rb = other.attachedRigidbody;
         if (rb == null) return;
 
-        Bounds b = GetComponent<Collider2D>().bounds;
+        Bounds b = col.bounds;
         bool isVerticalDoor = b.size.y > b.size.x;
         float velocity = isVerticalDoor ? rb.linearVelocity.x : rb.linearVelocity.y;
 

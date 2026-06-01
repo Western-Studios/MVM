@@ -36,3 +36,6 @@ ExportedObj/
 
 sysinfo.txt
 .vs/
+
+# Unity scene recovery backups
+[Aa]ssets/_Recovery/

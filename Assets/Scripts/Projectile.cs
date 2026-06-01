@@ -9,6 +9,8 @@ public class Projectile : MonoBehaviour
     [SerializeField] private float lifetime = 3f;
     [SerializeField] private bool canBurnDoors;
     [SerializeField] private bool destroyOnHit = true;
+    [Tooltip("When enabled, the projectile passes through walls and ground — only a valid target (player or enemy) destroys it. Use for enemy projectiles.")]
+    [SerializeField] private bool passThroughEnvironment = false;
 
     [Header("VFX")]
     [SerializeField] private GameObject impactVFXPrefab;
@@ -49,15 +51,26 @@ public class Projectile : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // Ignore Room bounds colliders (used for camera, not gameplay)
         if (other.TryGetComponent<Room>(out _)) return;
 
-        if (other.TryGetComponent<EnemyBase>(out var enemy))
+        var enemy = other.GetComponentInParent<EnemyBase>();
+        if (enemy != null)
+        {
             enemy.TakeDamage(damage);
-        else if (other.TryGetComponent<PlayerHealth>(out var player))
-            player.TakeDamage(damage);
+            if (destroyOnHit) SpawnImpactAndDestroy();
+            return;
+        }
 
-        if (destroyOnHit)
+        var player = other.GetComponentInParent<PlayerHealth>();
+        if (player != null)
+        {
+            player.TakeDamage(damage);
+            if (destroyOnHit) SpawnImpactAndDestroy();
+            return;
+        }
+
+        // Nothing meaningful hit — only destroy if this projectile doesn't pass through the environment.
+        if (destroyOnHit && !passThroughEnvironment)
             SpawnImpactAndDestroy();
     }
 

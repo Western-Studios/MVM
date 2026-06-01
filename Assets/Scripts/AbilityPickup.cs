@@ -11,7 +11,7 @@ public class AbilityPickup : MonoBehaviour
     [Header("VFX")]
     [SerializeField] private GameObject pickupVFXPrefab;
 
-    public void Start()
+    private void Start()
     {
         // Validate required references
         if (abilityData == null)
@@ -41,11 +41,7 @@ public class AbilityPickup : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log($"[AbilityPickup] Trigger entered by '{other.gameObject.name}' (tag: {other.tag})");
-
         if (!other.CompareTag("Player")) return;
-
-        Debug.Log($"[AbilityPickup] Player collected '{abilityType}'!");
 
         if (abilityData != null)
         {

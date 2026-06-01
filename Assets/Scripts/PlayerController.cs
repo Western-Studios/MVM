@@ -1,4 +1,8 @@
+using System.Collections.Generic;
 using UnityEngine;
+
+/// <summary>Which ability is currently selected in the cycle.</summary>
+public enum SpecialType { ArcaneBlast, Fireball, IceBolt }
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : MonoBehaviour
@@ -32,13 +36,15 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GameObject arcaneBlastPrefab;
     [SerializeField] private float attackCooldown = 0.4f;
 
-    [Header("Fireball  (Q key)")]
+    [Header("Fireball  (Special Ability)")]
     [SerializeField] private GameObject fireballPrefab;
     [SerializeField] private float fireballCooldown = 0.5f;
     [SerializeField] private float fireballRecoilForce = 16f;
+    [Tooltip("Vertical recoil is a one-time impulse (no lock), so it needs its own scale. Tune separately from horizontal.")]
+    [SerializeField] private float fireballRecoilForceY = 8f;
     [SerializeField] private float recoilLockDuration = 0.45f;
 
-    [Header("Ice Bolt  (E key)")]
+    [Header("Ice Bolt  (Special Ability)")]
     [SerializeField] private GameObject iceBoltPrefab;
     [SerializeField] private float iceBoltCooldown = 1f;
     [SerializeField] private float iceFreezeMaxTime = 0.65f;
@@ -64,6 +70,8 @@ public class PlayerController : MonoBehaviour
     private float recoilVelocityX;   // stored so we can hold it during the lock window
     private float iceFreezeTimer;
     private bool isFrozen;
+    private int selectedSpecialIndex = 0;
+    private readonly List<SpecialType> availableSpecials = new List<SpecialType>();
     [SerializeField] private bool isJumping;
     private float groundedTimer;
     private float defaultGravityScale;
@@ -114,10 +122,8 @@ public class PlayerController : MonoBehaviour
         CheckGround();
         HandleMovement();
         HandleJump();
-        HandleIceBolt();       // E key
-        HandleFireball();      // Q key
-        HandleTeleport();      // Right Click
-        HandleAttack();        // Left Click — arcane blast (always)
+        HandleSpecialAbility(); // Left Click to fire · Scroll to cycle
+        HandleTeleport();       // Right Click
         FaceMouse();
         UpdateAnimator();
     }
@@ -174,82 +180,91 @@ public class PlayerController : MonoBehaviour
             isJumping = true;
             animator?.SetTrigger("6_Other");
         }
-
-        if (Input.GetButtonUp("Jump") && rb.linearVelocity.y > 0f)
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y * 0.5f);
     }
 
-    // ── Arcane Blast — Left Click (always available) ───────────────────
-    private void HandleAttack()
+    // ── Special Abilities — Left Click to fire · Scroll to cycle ─────────
+    private void HandleSpecialAbility()
     {
-        attackCooldownCounter -= Time.deltaTime;
-
-        if (!Input.GetMouseButtonDown(0) || attackCooldownCounter > 0f) return;
-        if (arcaneBlastPrefab == null) return;
-
-        FireProjectile(arcaneBlastPrefab, AimDirection());
-
-        attackCooldownCounter = attackCooldown;
-        animator?.SetTrigger("2_Attack");
-    }
-
-    // ── Fireball — Q key (requires hasFireball) ────────────────────────
-    private void HandleFireball()
-    {
+        // All cooldowns tick every frame regardless of which spell is selected,
+        // so switching away doesn't pause a spell's recharge.
+        attackCooldownCounter   -= Time.deltaTime;
         fireballCooldownCounter -= Time.deltaTime;
+        iceBoltCooldownCounter  -= Time.deltaTime;
 
-        if (!abilities.hasFireball) return;
-        if (!Input.GetKeyDown(KeyCode.Q) || fireballCooldownCounter > 0f) return;
-        if (fireballPrefab == null) return;
-
-        Vector2 direction = AimDirection();
-        FireProjectile(fireballPrefab, direction);
-
-        // Recoil side effect — launches wizard opposite to firing direction.
-        // X is stored and held during the lock so the player reliably crosses gaps.
-        // Y is a one-time impulse; gravity takes over immediately after.
-        recoilVelocityX = -direction.x * fireballRecoilForce;
-        rb.linearVelocity = new Vector2(recoilVelocityX, -direction.y * fireballRecoilForce);
-        recoilTimer = recoilLockDuration;
-
-        fireballCooldownCounter = fireballCooldown;
-        animator?.SetTrigger("2_Attack");
-    }
-
-    // ── Ice Bolt — E key (requires hasIceBolt) ─────────────────────────
-    private void HandleIceBolt()
-    {
-        iceBoltCooldownCounter -= Time.deltaTime;
-
-        // Keep processing the freeze even if the cooldown lock isn't set
+        // Ice freeze state must be resolved every frame — process it before any input.
         if (isFrozen)
         {
             iceFreezeTimer -= Time.deltaTime;
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f);
-
             if (iceFreezeTimer <= 0f || isGrounded)
             {
                 isFrozen = false;
                 rb.gravityScale = defaultGravityScale;
             }
-            return;
+            return;  // No new input while frozen
         }
 
-        if (!abilities.hasIceBolt) return;
-        if (!Input.GetKeyDown(KeyCode.E) || iceBoltCooldownCounter > 0f) return;
-        if (iceBoltPrefab == null) return;
+        // Build the ability list. ArcaneBlast is always slot 0 — the reliable
+        // fallback the player can always scroll back to. Unlocked abilities follow.
+        availableSpecials.Clear();
+        availableSpecials.Add(SpecialType.ArcaneBlast);
+        if (abilities.hasFireball) availableSpecials.Add(SpecialType.Fireball);
+        if (abilities.hasIceBolt)  availableSpecials.Add(SpecialType.IceBolt);
 
-        FireProjectile(iceBoltPrefab, AimDirection());
+        // Scroll wheel cycles the selection.
+        float scroll = Input.GetAxis("Mouse ScrollWheel");
+        if (availableSpecials.Count > 1 && scroll != 0f)
+        {
+            selectedSpecialIndex += scroll > 0f ? 1 : -1;
+            // Two-step modulo handles negative indices correctly in C#.
+            selectedSpecialIndex = ((selectedSpecialIndex % availableSpecials.Count)
+                                    + availableSpecials.Count) % availableSpecials.Count;
+        }
+        // Clamp so a future ability-loss edge case can't leave index out of range.
+        selectedSpecialIndex = Mathf.Clamp(selectedSpecialIndex, 0, availableSpecials.Count - 1);
 
-        // Freeze side effect — halts wizard mid-air
-        rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f);
-        rb.gravityScale = 0f;
-        iceFreezeTimer = iceFreezeMaxTime;
-        isFrozen = true;
-        iceBoltCooldownCounter = iceBoltCooldown;
+        // Left mouse button fires the selected ability.
+        if (!Input.GetMouseButtonDown(0)) return;
 
-        animator?.SetTrigger("2_Attack");
+        switch (availableSpecials[selectedSpecialIndex])
+        {
+            case SpecialType.ArcaneBlast:
+                if (arcaneBlastPrefab == null || attackCooldownCounter > 0f) break;
+                FireProjectile(arcaneBlastPrefab, AimDirection());
+                attackCooldownCounter = attackCooldown;
+                animator?.SetTrigger("2_Attack");
+                break;
+
+            case SpecialType.Fireball:
+                if (fireballPrefab == null || fireballCooldownCounter > 0f) break;
+                Vector2 dir = AimDirection();
+                FireProjectile(fireballPrefab, dir);
+                recoilVelocityX = -dir.x * fireballRecoilForce;
+                rb.linearVelocity = new Vector2(recoilVelocityX, -dir.y * fireballRecoilForceY);
+                recoilTimer = recoilLockDuration;
+                fireballCooldownCounter = fireballCooldown;
+                animator?.SetTrigger("2_Attack");
+                break;
+
+            case SpecialType.IceBolt:
+                if (iceBoltPrefab == null || iceBoltCooldownCounter > 0f) break;
+                FireProjectile(iceBoltPrefab, AimDirection());
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f);
+                rb.gravityScale = 0f;
+                iceFreezeTimer = iceFreezeMaxTime;
+                isFrozen = true;
+                iceBoltCooldownCounter = iceBoltCooldown;
+                animator?.SetTrigger("2_Attack");
+                break;
+        }
     }
+
+    /// <summary>
+    /// The currently selected special, or null if no specials are unlocked yet.
+    /// Use this from a HUD script to display the active spell icon.
+    /// </summary>
+    public SpecialType? CurrentSpecial =>
+        availableSpecials.Count > 0 ? availableSpecials[selectedSpecialIndex] : (SpecialType?)null;
 
     // ── Teleport — Right Click (requires hasTeleport) ──────────────────
     private void HandleTeleport()
@@ -308,11 +323,19 @@ public class PlayerController : MonoBehaviour
             teleportCooldownCounter = teleportCooldown;
             Vector3 originPosition = transform.position;
 
-            // Spawn ghost copy at origin (triggers remote switches)
+            // Spawn ghost copy at origin (triggers remote switches).
+            // Raycast downward so the ghost lands on the nearest ground surface —
+            // without this it floats mid-air when the player jumped before teleporting.
             if (teleportGhostPrefab != null)
             {
                 if (activeGhost != null) Destroy(activeGhost);
-                activeGhost = Instantiate(teleportGhostPrefab, originPosition, Quaternion.identity);
+
+                Vector3 ghostSpawnPos = originPosition;
+                RaycastHit2D groundHit = Physics2D.Raycast(originPosition, Vector2.down, 12f, groundLayer);
+                if (groundHit.collider != null)
+                    ghostSpawnPos = groundHit.point;
+
+                activeGhost = Instantiate(teleportGhostPrefab, ghostSpawnPos, Quaternion.identity);
             }
 
             // Departure smoke at origin

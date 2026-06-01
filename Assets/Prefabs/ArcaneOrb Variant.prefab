@@ -176,7 +176,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Projectile
   speed: 12
   damage: 1
-  lifetime: 3
+  lifetime: 0.75
   canBurnDoors: 0
   destroyOnHit: 1
   impactVFXPrefab: {fileID: 0}

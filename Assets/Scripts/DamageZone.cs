@@ -1,8 +1,12 @@
 using UnityEngine;
 
 /// <summary>
-/// Attach to any trigger collider to make it damage or instantly kill the player.
+/// Attach to any trigger collider to damage or instantly kill the player.
 /// Works for spikes, lava pits, hazard floors, or anything else that hurts on contact.
+///
+/// Uses GetComponentInParent so it finds PlayerHealth whether it lives on the same
+/// GameObject as the player's collider or on any parent in the hierarchy (e.g. SPUM rigs
+/// where the Collider2D is on a child but PlayerHealth is on the root).
 /// </summary>
 public class DamageZone : MonoBehaviour
 {
@@ -20,7 +24,10 @@ public class DamageZone : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (!other.TryGetComponent<PlayerHealth>(out var health)) return;
+        // GetComponentInParent walks up the hierarchy, so it finds PlayerHealth
+        // even when the collider is on a child object (common with SPUM rigs).
+        var health = other.GetComponentInParent<PlayerHealth>();
+        if (health == null) return;
 
         if (instantKill)
         {
@@ -28,7 +35,7 @@ public class DamageZone : MonoBehaviour
             return;
         }
 
-        // First contact deals damage immediately, then the interval timer takes over
+        // First contact deals damage immediately; interval timer handles repeated ticks
         health.TakeDamage(damagePerHit);
         damageTimer = damageInterval;
     }
@@ -36,7 +43,9 @@ public class DamageZone : MonoBehaviour
     private void OnTriggerStay2D(Collider2D other)
     {
         if (instantKill) return;
-        if (!other.TryGetComponent<PlayerHealth>(out var health)) return;
+
+        var health = other.GetComponentInParent<PlayerHealth>();
+        if (health == null) return;
 
         damageTimer -= Time.deltaTime;
         if (damageTimer <= 0f)

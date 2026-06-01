@@ -5804,7 +5804,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7df86618531784d4daec33b4fa75e99c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeleportGhost
-  lifetime: 2
+  lifetime: 1
   fadeDuration: 1
 --- !u!50 &1615003110508717870
 Rigidbody2D:
@@ -5821,7 +5821,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 0
+  m_GravityScale: 1
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
