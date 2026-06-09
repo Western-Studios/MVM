@@ -16,6 +16,9 @@ public class DeathScreen : MonoBehaviour
     [Tooltip("Name of the main menu scene. Must match exactly what's in Build Settings.")]
     [SerializeField] private string       mainMenuSceneName = "MainMenu";
 
+    [Tooltip("The room the player starts in — used as camera fallback when no checkpoint is set.")]
+    [SerializeField] private Room startRoom;
+
     private Vector3 startPosition;
 
     private void Awake()
@@ -36,10 +39,12 @@ public class DeathScreen : MonoBehaviour
     public void Show()
     {
         panel.SetActive(true);
+        Time.timeScale = 0f;
     }
 
     private void OnRespawnClicked()
     {
+        Time.timeScale = 1f;
         panel.SetActive(false);
 
         Vector3 spawnPos = CheckpointManager.Instance != null
@@ -47,6 +52,9 @@ public class DeathScreen : MonoBehaviour
             : startPosition;
 
         playerHealth?.Respawn(spawnPos);
+
+        Room spawnRoom = CheckpointManager.Instance?.GetRespawnRoom() ?? startRoom;
+        spawnRoom?.Activate();
     }
 
     private void OnMainMenuClicked()

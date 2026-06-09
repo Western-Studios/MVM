@@ -13,11 +13,18 @@ public class Checkpoint : MonoBehaviour
 
     private Color inactiveColor;
     private bool  activated;
+    private Room  homeRoom;
 
     private void Awake()
     {
         if (indicator != null)
             inactiveColor = indicator.color;
+    }
+
+    private void Start()
+    {
+        var col = Physics2D.OverlapCircle(transform.position, 1f, LayerMask.GetMask("Room"));
+        homeRoom = col?.GetComponent<Room>();
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -26,7 +33,8 @@ public class Checkpoint : MonoBehaviour
         if (other.GetComponentInParent<PlayerHealth>() == null) return;
 
         activated = true;
-        CheckpointManager.Instance?.SetCheckpoint(transform.position);
+        CheckpointManager.Instance?.SetCheckpoint(transform.position, homeRoom);
+        AudioManager.Instance?.PlayCheckpoint();
 
         if (indicator != null)
             indicator.color = activeColor;

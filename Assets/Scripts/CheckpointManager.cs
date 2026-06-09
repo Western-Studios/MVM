@@ -5,6 +5,7 @@ public class CheckpointManager : MonoBehaviour
     public static CheckpointManager Instance { get; private set; }
 
     private Vector3 respawnPosition;
+    private Room    respawnRoom;
     private bool    hasCheckpoint;
 
     private void Awake()
@@ -14,13 +15,15 @@ public class CheckpointManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    public void SetCheckpoint(Vector3 position)
+    public void SetCheckpoint(Vector3 position, Room room = null)
     {
         respawnPosition = position;
+        respawnRoom     = room;
         hasCheckpoint   = true;
     }
 
-    // Returns the saved checkpoint, or fallback (player's starting position) if none set yet.
     public Vector3 GetRespawnPosition(Vector3 fallback)
         => hasCheckpoint ? respawnPosition : fallback;
+
+    public Room GetRespawnRoom() => respawnRoom;
 }

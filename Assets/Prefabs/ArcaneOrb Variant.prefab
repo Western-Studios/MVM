@@ -13,6 +13,10 @@ PrefabInstance:
       value: ArcaneOrb Variant
       objectReference: {fileID: 0}
     - target: {fileID: 720135145037961379, guid: 5714829a3d11d394c8f7dba269972167, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 720135145037961379, guid: 5714829a3d11d394c8f7dba269972167, type: 3}
       propertyPath: m_TagString
       value: Projectile
       objectReference: {fileID: 0}
@@ -174,9 +178,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f129a3cd64d101408dd0c5728dcceee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Projectile
-  speed: 12
+  speed: 8
   damage: 1
-  lifetime: 0.75
+  lifetime: 2
   canBurnDoors: 0
   destroyOnHit: 1
+  passThroughEnvironment: 0
+  passThroughTag: 
   impactVFXPrefab: {fileID: 0}

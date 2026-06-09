@@ -12,6 +12,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Basic Orb Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 720135145037961379, guid: 5714829a3d11d394c8f7dba269972167, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 3421914617097493498, guid: 5714829a3d11d394c8f7dba269972167, type: 3}
       propertyPath: m_LocalPosition.x
       value: 4.3174
@@ -152,4 +156,5 @@ MonoBehaviour:
   canBurnDoors: 0
   destroyOnHit: 1
   passThroughEnvironment: 1
+  passThroughTag: 
   impactVFXPrefab: {fileID: 0}

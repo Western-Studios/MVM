@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(Camera))]
@@ -11,6 +12,7 @@ public class CameraController : MonoBehaviour
     private Camera cam;
     private Bounds activeBounds;
     private bool hasBounds;
+    private Coroutine zoomCoroutine;
 
     private void Awake()
     {
@@ -42,6 +44,23 @@ public class CameraController : MonoBehaviour
             desired = ClampToRoom(desired, activeBounds);
 
         transform.position = Vector3.Lerp(transform.position, desired, followSmoothing * Time.deltaTime);
+    }
+
+    public void ZoomTo(float targetSize, float duration = 0.6f)
+    {
+        if (zoomCoroutine != null) StopCoroutine(zoomCoroutine);
+        zoomCoroutine = StartCoroutine(ZoomRoutine(targetSize, duration));
+    }
+
+    private IEnumerator ZoomRoutine(float targetSize, float duration)
+    {
+        float start = cam.orthographicSize;
+        for (float t = 0f; t < 1f; t += Time.deltaTime / duration)
+        {
+            cam.orthographicSize = Mathf.Lerp(start, targetSize, t);
+            yield return null;
+        }
+        cam.orthographicSize = targetSize;
     }
 
     private Vector3 ClampToRoom(Vector3 position, Bounds bounds)

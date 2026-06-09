@@ -32,7 +32,6 @@ public class SlimeEnemy : EnemyBase
     [SerializeField] private SlimeState currentState = SlimeState.Patrol;
     [SerializeField] private Transform  player;
 
-    private Rigidbody2D rb;
     private Collider2D  col;
     private SpriteRenderer spriteRenderer;
 

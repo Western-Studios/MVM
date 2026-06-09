@@ -30,6 +30,9 @@ public class PlayerHealth : MonoBehaviour
     public UnityEvent           onReadyToRespawn;  // fires after respawnDelay — wire to DeathScreen.Show
     public UnityEvent           onHealed;          // fires on each passive heal tick — use for sound
 
+    // Enemies subscribe to this to reset themselves when the player respawns.
+    public static event System.Action onPlayerRespawn;
+
     private int   currentHealth;
     private float invincibilityTimer;
     private bool  isDead;
@@ -81,7 +84,14 @@ public class PlayerHealth : MonoBehaviour
             currentHealth <= 0 ? DeathFlashRoutine() : HitFlashRoutine());
 
         if (currentHealth <= 0)
+        {
+            AudioManager.Instance?.PlayPlayerDeath();
             HandleDeath();
+        }
+        else
+        {
+            AudioManager.Instance?.PlayPlayerHurt();
+        }
     }
 
     public void Heal(int amount)
@@ -119,6 +129,7 @@ public class PlayerHealth : MonoBehaviour
         if (playerController != null) playerController.enabled = true;
 
         onHealthChanged?.Invoke(currentHealth, maxHealth);
+        onPlayerRespawn?.Invoke();
     }
 
     public int  CurrentHealth => currentHealth;

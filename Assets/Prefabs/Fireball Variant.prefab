@@ -53,6 +53,10 @@ PrefabInstance:
       value: Fireball Variant
       objectReference: {fileID: 0}
     - target: {fileID: 7011574980652007753, guid: d5e45887b593fd449bb7e2b65a451fb4, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 7011574980652007753, guid: d5e45887b593fd449bb7e2b65a451fb4, type: 3}
       propertyPath: m_TagString
       value: Projectile
       objectReference: {fileID: 0}
@@ -151,8 +155,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Projectile
   speed: 0.5
-  damage: 1
+  damage: 5
   lifetime: 3
   canBurnDoors: 1
   destroyOnHit: 1
+  passThroughEnvironment: 0
+  passThroughTag: 
   impactVFXPrefab: {fileID: 7355309728671168227, guid: 8af6c1d034e23814c9094a26b11d4c1d, type: 3}

@@ -53,6 +53,8 @@ public class AbilityPickup : MonoBehaviour
             }
         }
 
+        AudioManager.Instance?.PlayAbilityPickup();
+
         if (pickupVFXPrefab != null)
             Instantiate(pickupVFXPrefab, transform.position, Quaternion.identity);
 

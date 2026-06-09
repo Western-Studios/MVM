@@ -30,6 +30,8 @@ public abstract class EnemyBase : MonoBehaviour
     private Coroutine flashCoroutine;
 
     private Room homeRoom;
+    private Vector3 spawnPosition;
+    protected Rigidbody2D rb;
 
     // True when this enemy's room is the currently active room.
     // Subclasses use this to pause AI and movement when the player isn't in this room.
@@ -60,10 +62,33 @@ public abstract class EnemyBase : MonoBehaviour
     protected virtual void Awake()
     {
         currentHealth  = maxHealth;
+        spawnPosition  = transform.position;
+        rb             = GetComponent<Rigidbody2D>();
         renderers      = GetComponentsInChildren<SpriteRenderer>();
         originalColors = new Color[renderers.Length];
         for (int i = 0; i < renderers.Length; i++)
             originalColors[i] = renderers[i].color;
+
+        PlayerHealth.onPlayerRespawn += ResetToSpawn;
+    }
+
+    protected virtual void OnDestroy()
+    {
+        PlayerHealth.onPlayerRespawn -= ResetToSpawn;
+    }
+
+    protected virtual void ResetToSpawn()
+    {
+        currentHealth      = maxHealth;
+        transform.position = spawnPosition;
+        if (rb != null) rb.linearVelocity = Vector2.zero;
+        RestoreColors();
+    }
+
+    private void RestoreColors()
+    {
+        for (int i = 0; i < renderers.Length; i++)
+            if (renderers[i] != null) renderers[i].color = originalColors[i];
     }
 
     // Start runs after all Awake calls, so Room colliders are guaranteed to be
@@ -76,19 +101,10 @@ public abstract class EnemyBase : MonoBehaviour
 
     private Room FindHomeRoom()
     {
-        // OverlapCircle with a generous radius handles enemies whose pivot sits at
-        // floor level — below the bottom edge of the Room trigger collider.
-        int roomMask = LayerMask.GetMask("Room");
-        var col = Physics2D.OverlapCircle(transform.position, 2f, roomMask);
-        if (col != null) return col.GetComponent<Room>();
-
-        // Fallback: rooms are horizontally non-overlapping, so find the one whose
-        // X bounds contain this enemy (robust even if room colliders are sized tightly).
         var allRooms = FindObjectsByType<Room>(FindObjectsInactive.Exclude);
         foreach (var room in allRooms)
         {
-            Bounds b = room.Bounds;
-            if (transform.position.x >= b.min.x && transform.position.x <= b.max.x)
+            if (room.Bounds.Contains(transform.position))
                 return room;
         }
 

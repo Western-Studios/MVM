@@ -68,6 +68,7 @@ public class PlayerController : MonoBehaviour
     private float teleportCooldownCounter;
     private float recoilTimer;
     private float recoilVelocityX;   // stored so we can hold it during the lock window
+    private bool scrollConsumed;
     private float iceFreezeTimer;
     private bool isFrozen;
     private int selectedSpecialIndex = 0;
@@ -211,20 +212,28 @@ public class PlayerController : MonoBehaviour
         if (abilities.hasFireball) availableSpecials.Add(SpecialType.Fireball);
         if (abilities.hasIceBolt)  availableSpecials.Add(SpecialType.IceBolt);
 
-        // Scroll wheel cycles the selection.
+        // Number keys select spell directly (silently ignored if not yet unlocked).
+        if (Input.GetKeyDown(KeyCode.Alpha1))      SelectSpell(SpecialType.ArcaneBlast);
+        else if (Input.GetKeyDown(KeyCode.Alpha2)) SelectSpell(SpecialType.Fireball);
+        else if (Input.GetKeyDown(KeyCode.Alpha3)) SelectSpell(SpecialType.IceBolt);
+
+        // Scroll wheel cycles — one step per physical scroll gesture.
+        // scrollConsumed prevents a single trackpad swipe from skipping multiple slots.
         float scroll = Input.GetAxis("Mouse ScrollWheel");
-        if (availableSpecials.Count > 1 && scroll != 0f)
+        if (Mathf.Abs(scroll) < 0.01f)
+            scrollConsumed = false;
+        else if (!scrollConsumed && availableSpecials.Count > 1)
         {
+            scrollConsumed = true;
             selectedSpecialIndex += scroll > 0f ? 1 : -1;
-            // Two-step modulo handles negative indices correctly in C#.
             selectedSpecialIndex = ((selectedSpecialIndex % availableSpecials.Count)
                                     + availableSpecials.Count) % availableSpecials.Count;
         }
         // Clamp so a future ability-loss edge case can't leave index out of range.
         selectedSpecialIndex = Mathf.Clamp(selectedSpecialIndex, 0, availableSpecials.Count - 1);
 
-        // Left mouse button fires the selected ability.
-        if (!Input.GetMouseButtonDown(0)) return;
+        // Hold left mouse button to fire the selected ability (cooldowns rate-limit it).
+        if (!Input.GetMouseButton(0)) return;
 
         switch (availableSpecials[selectedSpecialIndex])
         {
@@ -233,6 +242,7 @@ public class PlayerController : MonoBehaviour
                 FireProjectile(arcaneBlastPrefab, AimDirection());
                 attackCooldownCounter = attackCooldown;
                 animator?.SetTrigger("2_Attack");
+                AudioManager.Instance?.PlayArcaneBlast();
                 break;
 
             case SpecialType.Fireball:
@@ -244,6 +254,7 @@ public class PlayerController : MonoBehaviour
                 recoilTimer = recoilLockDuration;
                 fireballCooldownCounter = fireballCooldown;
                 animator?.SetTrigger("2_Attack");
+                AudioManager.Instance?.PlayFireball();
                 break;
 
             case SpecialType.IceBolt:
@@ -255,6 +266,7 @@ public class PlayerController : MonoBehaviour
                 isFrozen = true;
                 iceBoltCooldownCounter = iceBoltCooldown;
                 animator?.SetTrigger("2_Attack");
+                AudioManager.Instance?.PlayIceBolt();
                 break;
         }
     }
@@ -265,6 +277,11 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     public SpecialType? CurrentSpecial =>
         availableSpecials.Count > 0 ? availableSpecials[selectedSpecialIndex] : (SpecialType?)null;
+
+    // 0 = ready, 1 = just fired (fully cooling). Used by SpellHUD cooldown overlays.
+    public float ArcaneBlastCooldown01 => attackCooldown   > 0f ? Mathf.Clamp01(attackCooldownCounter   / attackCooldown)   : 0f;
+    public float FireballCooldown01    => fireballCooldown  > 0f ? Mathf.Clamp01(fireballCooldownCounter  / fireballCooldown)  : 0f;
+    public float IceBoltCooldown01     => iceBoltCooldown   > 0f ? Mathf.Clamp01(iceBoltCooldownCounter   / iceBoltCooldown)   : 0f;
 
     // ── Teleport — Right Click (requires hasTeleport) ──────────────────
     private void HandleTeleport()
@@ -344,11 +361,18 @@ public class PlayerController : MonoBehaviour
 
             // Move the wizard
             transform.position = targetPosition;
+            AudioManager.Instance?.PlayTeleport();
 
             // Arrival smoke at destination
             if (teleportSmokePrefab != null)
                 Instantiate(teleportSmokePrefab, targetPosition, Quaternion.identity);
         }
+    }
+
+    private void SelectSpell(SpecialType type)
+    {
+        int idx = availableSpecials.IndexOf(type);
+        if (idx >= 0) selectedSpecialIndex = idx;
     }
 
     // ── Utilities ──────────────────────────────────────────────────────

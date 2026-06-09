@@ -11,6 +11,8 @@ public class Projectile : MonoBehaviour
     [SerializeField] private bool destroyOnHit = true;
     [Tooltip("When enabled, the projectile passes through walls and ground — only a valid target (player or enemy) destroys it. Use for enemy projectiles.")]
     [SerializeField] private bool passThroughEnvironment = false;
+    [Tooltip("Any collider with this tag is ignored. Leave empty to disable. Use to let boss projectiles pass through a specific dividing wall.")]
+    [SerializeField] private string passThroughTag = "";
 
     [Header("VFX")]
     [SerializeField] private GameObject impactVFXPrefab;
@@ -51,7 +53,9 @@ public class Projectile : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.TryGetComponent<Room>(out _)) return;
+if (other.TryGetComponent<Room>(out _)) return;
+        if (other.GetComponentInParent<BossWizard>() != null) return;
+        if (!string.IsNullOrEmpty(passThroughTag) && other.CompareTag(passThroughTag)) return;
 
         var enemy = other.GetComponentInParent<EnemyBase>();
         if (enemy != null)
