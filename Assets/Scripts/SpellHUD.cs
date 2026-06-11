@@ -20,6 +20,9 @@ public class SpellHUD : MonoBehaviour
     [SerializeField] private SpellSlot fireballSlot;
     [SerializeField] private SpellSlot iceBoltSlot;
 
+    [Header("Teleport Indicator")]
+    [SerializeField] private GameObject teleportIndicator;
+
     [Header("Icons (optional — leave empty to use color only)")]
     [SerializeField] private Sprite arcaneBlastIcon;
     [SerializeField] private Sprite fireballIcon;
@@ -50,6 +53,9 @@ public class SpellHUD : MonoBehaviour
         UpdateSlot(arcaneBlastSlot, SpecialType.ArcaneBlast, true,                 selected, player.ArcaneBlastCooldown01);
         UpdateSlot(fireballSlot,    SpecialType.Fireball,    abilities.hasFireball, selected, player.FireballCooldown01);
         UpdateSlot(iceBoltSlot,     SpecialType.IceBolt,     abilities.hasIceBolt,  selected, player.IceBoltCooldown01);
+
+        if (teleportIndicator != null)
+            teleportIndicator.SetActive(abilities.hasTeleport);
     }
 
     private void UpdateSlot(SpellSlot slot, SpecialType type, bool unlocked, SpecialType? selected, float cooldown01)

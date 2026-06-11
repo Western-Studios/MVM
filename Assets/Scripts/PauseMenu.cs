@@ -50,13 +50,15 @@ public class PauseMenu : MonoBehaviour
     private void OnSettings()
     {
         AudioManager.Instance?.PlayButtonClick();
-        settingsPanel?.SetActive(!settingsPanel.activeSelf);
+        panel.SetActive(false);
+        settingsPanel?.SetActive(true);
     }
 
     public void CloseSettings()
     {
         AudioManager.Instance?.PlayButtonClick();
         settingsPanel?.SetActive(false);
+        panel.SetActive(true);
     }
 
     private void OnMainMenu()

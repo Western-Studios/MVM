@@ -1,33 +1,37 @@
+using System.Collections;
 using UnityEngine;
 
-/// <summary>
-/// Visual marker left at the player's last teleport origin.
-/// Purely cosmetic — no physics interaction. Fades out over its lifetime.
-/// Pressure plate detection is handled by PressurePlate.CheckForGhost() via bounds overlap.
-/// </summary>
 public class TeleportGhost : MonoBehaviour
 {
     [SerializeField] private float lifetime = 4f;
     [SerializeField] private float fadeDuration = 1f;
+    [Tooltip("Max seconds to wait for gravity to land the ghost before freezing it in place.")]
+    [SerializeField] private float settleTimeout = 0.5f;
 
     private SpriteRenderer sr;
+    private Rigidbody2D rb;
     private float timer;
 
     private void Awake()
     {
-        sr = GetComponent<SpriteRenderer>();
+        sr    = GetComponent<SpriteRenderer>();
+        rb    = GetComponent<Rigidbody2D>();
         timer = lifetime;
+    }
 
-        // Ghost is a pure visual marker — it must never move on its own.
-        // If the prefab has a Rigidbody2D (e.g., for sprite sorting or layer reasons),
-        // switch it to Kinematic so gravity cannot pull the ghost through the floor.
-        var rb = GetComponent<Rigidbody2D>();
+    private void Start()
+    {
         if (rb != null)
-        {
-            rb.bodyType = RigidbodyType2D.Kinematic;
-            rb.linearVelocity  = Vector2.zero;
-            rb.angularVelocity = 0f;
-        }
+            StartCoroutine(SettleRoutine());
+    }
+
+    // Let gravity drop the ghost to the floor, then freeze it in place.
+    private IEnumerator SettleRoutine()
+    {
+        yield return new WaitForSeconds(settleTimeout);
+        rb.bodyType        = RigidbodyType2D.Kinematic;
+        rb.linearVelocity  = Vector2.zero;
+        rb.angularVelocity = 0f;
     }
 
     private void Update()

@@ -347,10 +347,9 @@ public class PlayerController : MonoBehaviour
             {
                 if (activeGhost != null) Destroy(activeGhost);
 
-                Vector3 ghostSpawnPos = originPosition;
-                RaycastHit2D groundHit = Physics2D.Raycast(originPosition, Vector2.down, 12f, groundLayer);
-                if (groundHit.collider != null)
-                    ghostSpawnPos = groundHit.point;
+                // Use the ground-check transform (player's foot position) so the ghost
+                // lands at floor level without needing a raycast that could hit the player.
+                Vector3 ghostSpawnPos = groundCheck != null ? groundCheck.position : originPosition;
 
                 activeGhost = Instantiate(teleportGhostPrefab, ghostSpawnPos, Quaternion.identity);
             }
